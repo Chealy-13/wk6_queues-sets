@@ -6,8 +6,8 @@ package com.chris.week6ca;
 
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
-import org.junit.jupiter.api.Assertions;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -16,19 +16,53 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TaskTest {
     
      @Test
-     public void hello() {
-         System.out.println("HELLO!!!!");
-         Task task = new Task("Owner", "Some description", LocalDate.now());
-         System.out.println("Description is: " + task.getDescription());
+     public void constructorValid() {
+         String owner = "Owner";
+         String description = "Some description";
+         LocalDate date = LocalDate.now().plusDays(1);
+         Task task = new Task(owner, description, date);
          
-         Assertions.assertEquals("Owner", task.getOwner());
+         assertEquals(owner, task.getOwner());
+         assertEquals(description, task.getDescription());
+         assertEquals(date, task.getDeadline());
      }
      
-     @Test //validating deadline in construtor
-     public void deadlineValidate() {
-         Task task = new Task("Owner", "Some description", LocalDate.now());
-         if (LocalDate.now().compareTo(task.getDeadline()) >= 0) {
-             System.out.println("This deadline has expired");
-         }
+     @Test
+     public void constructorInvalid() {
+         String owner = "Owner";
+         String description = "Some description";
+         //forcing deadline to be in past
+         LocalDate date = LocalDate.now().minusDays(1);
+         
+         assertThrows(RuntimeException.class, () -> {
+            new Task(owner, description, date);
+        });
+     }
+     
+     @Test
+     public void settersValid() {
+         Task task = new Task("", "", LocalDate.now().plusDays(1));
+         String owner = "Owner";
+         String description = "Some description";
+         LocalDate date = LocalDate.now().plusDays(1);
+         task.setOwner(owner);
+         task.setDescription(description);
+         task.setDeadline(date);
+         
+         
+         assertEquals(owner, task.getOwner());
+         assertEquals(description, task.getDescription());
+         assertEquals(date, task.getDeadline());
+     }
+     
+     @Test
+     public void setDeadlineInvalid() {
+         Task task = new Task("", "", LocalDate.now().plusDays(1));
+         //forcing deadline to be in past
+
+         assertThrows(RuntimeException.class, () -> {
+            task.setDeadline(LocalDate.now().minusDays(1));
+        });
      }
 }
+
